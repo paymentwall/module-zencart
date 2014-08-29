@@ -20,7 +20,7 @@ Paymentwall_Base::setSecretKey(MODULE_PAYMENT_PAYMENTWALL_SECRET_KEY); // availa
 $pingback = new Paymentwall_Pingback($_GET, $_SERVER['REMOTE_ADDR']);
 if ($pingback->validate()) {
   $productId = $pingback->getProduct()->getId();
-  $id = $db->Execute("select orders_id from " . TABLE_ORDERS . " where orders_id = " . $productId);
+  $id = $db->Execute("select orders_id from " . TABLE_ORDERS . " where orders_id = " .  intval($productId));
 
   if(!$id->EOF) {
     if ($pingback->isDeliverable()) {
