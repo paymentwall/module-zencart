@@ -5,7 +5,7 @@
 *
 * @package paymentMethod
 * @copyright Copyright 2014 Paymentwall Inc.
-* @version v1.0.0
+* @version v1.0.1
 */
 
 require 'includes/application_top.php';
@@ -13,9 +13,11 @@ require 'includes/application_top.php';
 if($_SESSION['order'] && $_SESSION['insert_id']) {
   require 'paymentwall_api/lib/paymentwall.php';
 
-  Paymentwall_Base::setApiType(Paymentwall_Base::API_GOODS);
-  Paymentwall_Base::setAppKey(MODULE_PAYMENT_PAYMENTWALL_APP_KEY);       // available in your Paymentwall merchant area
-  Paymentwall_Base::setSecretKey(MODULE_PAYMENT_PAYMENTWALL_SECRET_KEY); // available in your Paymentwall merchant area
+  Paymentwall_Config::getInstance()->set(array(
+      'api_type' => Paymentwall_Config::API_GOODS,
+      'public_key' => MODULE_PAYMENT_PAYMENTWALL_APP_KEY, // available in your Paymentwall merchant area
+      'private_key' => MODULE_PAYMENT_PAYMENTWALL_SECRET_KEY // available in your Paymentwall merchant area
+  ));
 
   $order = (array)unserialize(base64_decode($_SESSION['order']));
 
@@ -40,6 +42,7 @@ if($_SESSION['order'] && $_SESSION['insert_id']) {
     array(
       'email' => $order['customer']['email_address'],
       'success_url' => strval(MODULE_PAYMENT_PAYMENTWALL_SUCCESS_URI),
+      'integration_module' => 'zencart',
       'test_mode' => ((MODULE_PAYMENT_PAYMENTWALL_TEST_MODE == 'True') ? 1 : 0)
     )                                           // additional parameters
   );
