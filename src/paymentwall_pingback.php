@@ -5,7 +5,7 @@
 *
 * @package paymentMethod
 * @copyright Copyright 2014 Paymentwall Inc.
-* @version v1.0.0
+* @version v1.0.1
 */
 
 require 'paymentwall_api/lib/paymentwall.php';
@@ -13,10 +13,14 @@ require 'includes/application_top.php';
 
 global $db;
 
-Paymentwall_Base::setApiType(Paymentwall_Base::API_GOODS);
-Paymentwall_Base::setAppKey(MODULE_PAYMENT_PAYMENTWALL_APP_KEY); // available in your Paymentwall merchant area
-Paymentwall_Base::setSecretKey(MODULE_PAYMENT_PAYMENTWALL_SECRET_KEY); // available in your Paymentwall merchant area
-
+Paymentwall_Config::getInstance()->set(array(
+    'api_type' => Paymentwall_Config::API_GOODS,
+    'public_key' => MODULE_PAYMENT_PAYMENTWALL_APP_KEY, // available in your Paymentwall merchant area
+    'private_key' => MODULE_PAYMENT_PAYMENTWALL_SECRET_KEY // available in your Paymentwall merchant area
+));
+if (isset($_GET['main_page']) && $_GET['main_page'] != ''){
+    unset($_GET['main_page']);
+}
 $pingback = new Paymentwall_Pingback($_GET, $_SERVER['REMOTE_ADDR']);
 if ($pingback->validate()) {
   $productId = $pingback->getProduct()->getId();
@@ -37,3 +41,4 @@ if ($pingback->validate()) {
 } else {
   echo $pingback->getErrorSummary();
 }
+die();
